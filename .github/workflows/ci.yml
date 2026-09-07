@@ -1,7 +1,6 @@
 name: create-docker-images
 
 on:
-  push:
   workflow_dispatch:
 
 env:
