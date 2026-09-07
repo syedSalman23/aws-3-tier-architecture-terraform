@@ -1,0 +1,129 @@
+name: create-docker-images
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  frontend: frontend-image
+  backend: backend-image
+  IMAGE_TAG: latest
+  region: ap-south-1
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}  
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: application-code/web-tier/web-tier/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.region }}
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ env.region }} | \
+          docker login --username AWS --password-stdin \
+          ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            -t ${{ env.frontend }}:${{ env.IMAGE_TAG }} .
+
+      - name: Tag frontend Docker image
+        run: |
+          docker tag \
+            ${{ env.frontend }}:${{ env.IMAGE_TAG }} \
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.frontend }}:${{ env.IMAGE_TAG }}
+
+      - name: Push frontend Docker image to ECR
+        run: |
+          docker push \
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.frontend }}:${{ env.IMAGE_TAG }}
+      
+      - name: Deploy frontend to EC2
+        run: |
+          INTERNAL_ALB_DNS=$(aws elbv2 describe-load-balancers \
+            --names int-alb-tf \
+            --query 'LoadBalancers[0].DNSName' \
+            --output text)
+
+          aws ssm send-command \
+            --targets "Key=tag:Name,Values=frontend-server" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="[
+              \"aws ecr get-login-password --region ${{ env.region }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com\",
+              \"docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.frontend }}:${{ env.IMAGE_TAG }}\",
+              \"docker rm -f frontend || true\",
+              \"docker run -d --name frontend -p 80:80 -e INTERNAL_ALB_DNS=$INTERNAL_ALB_DNS ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.frontend }}:${{ env.IMAGE_TAG }}\"
+            ]"
+            
+
+  backend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: application-code/app-tier/app-tier/
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.region }}
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ env.region }} | \
+          docker login --username AWS --password-stdin \
+          ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com
+
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            -t ${{ env.backend }}:${{ env.IMAGE_TAG }} .
+
+      - name: Tag backend Docker image
+        run: |
+          docker tag \
+            ${{ env.backend }}:${{ env.IMAGE_TAG }} \
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.backend }}:${{ env.IMAGE_TAG }}
+
+      - name: Push backend Docker image to ECR
+        run: |
+          docker push \
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.backend }}:${{ env.IMAGE_TAG }}
+      
+      - name: Deploy backend to EC2
+        run: |
+          DB_HOST=$(aws rds describe-db-instances \
+            --db-instance-identifier rds-db \
+            --query 'DBInstances[0].Endpoint.Address' \
+            --output text)
+
+          aws ssm send-command \
+            --targets "Key=tag:Name,Values=backend-server" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="[
+              \"aws ecr get-login-password --region ${{ env.region }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com\",
+              \"docker pull ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.backend }}:${{ env.IMAGE_TAG }}\",
+              \"docker rm -f backend || true\",
+              \"docker run -d --name backend -p 4000:4000 -e DB_HOST=$DB_HOST -e DB_USER=root -e DB_PWD='root@123' -e DB_DATABASE=mydb ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.region }}.amazonaws.com/${{ env.backend }}:${{ env.IMAGE_TAG }}\"
+            ]"
+      
