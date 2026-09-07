@@ -1,4 +1,5 @@
 resource "aws_db_subnet_group" "db-sub-group" {
+
   name = "db-subnet-group"
 
   subnet_ids = [
@@ -13,16 +14,21 @@ resource "aws_db_subnet_group" "db-sub-group" {
 
 
 resource "aws_db_instance" "rds-db" {
+
+  identifier = "rds-db"
+
   allocated_storage = 10
 
   db_name = "mydb"
 
-  engine         = "mysql"
+  engine = "mysql"
+
   engine_version = "8.0"
 
   instance_class = "db.t3.micro"
 
   username = "root"
+
   password = "root@123"
 
   db_subnet_group_name = aws_db_subnet_group.db-sub-group.name
