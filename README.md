@@ -63,9 +63,9 @@ This project implements a traditional **3-Tier Architecture**:
 
 ---
 
-#🏗️ Architecture
+# 🏗️ Architecture
+# 🔥 Architecture Components
 
-🔥 Architecture Components
 ## 1️⃣ Presentation Tier
 The frontend is built using React.
 
