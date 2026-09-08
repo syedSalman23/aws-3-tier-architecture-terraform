@@ -174,7 +174,7 @@ Amazon RDS MySQL
 
 ## 🔐 Security Group Architecture
 Traffic is restricted using security groups.
-
+```
 Internet
    │
    ▼
@@ -195,6 +195,7 @@ Backend Security Group
    │ Port 3306
    ▼
 Database Security Group
+```
 
 ## Rules
 Component	    Port	Source
