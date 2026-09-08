@@ -367,6 +367,7 @@ aws-3-tier-architecture-terraform/
 ```
 
 ## 🔧 Terraform Files
+```
 File	                Purpose
 provider.tf	            AWS provider configuration
 vpc.tf	                Creates VPC
@@ -384,7 +385,7 @@ target-group.tf	        Target groups
 rds.tf	                RDS MySQL
 outputs.tf	            Terraform outputs
 auto-scaling.tf	        Auto Scaling configuration/work area
-
+```
 
 ## 🚀 CI/CD Pipeline
 GitHub Actions is used to automate Docker image creation and deployment.
@@ -427,6 +428,7 @@ Amazon ECR       Amazon ECR
 ## 🔄 CI/CD Process
 
 When code is pushed to the main branch:
+```
 git push
    ↓
 GitHub Actions starts
@@ -450,6 +452,7 @@ Pull latest Docker image
 Remove old container
    ↓
 Start new container
+```
 The workflow can also be started manually using:
 GitHub Actions → Run workflow
 
@@ -489,7 +492,8 @@ This allows deployment without storing AWS credentials inside the EC2 instance.
 ## 📡 AWS Systems Manager
 GitHub Actions uses AWS Systems Manager to execute deployment commands on EC2.
 
-## Example deployment flow:
+Example deployment flow:
+```
 GitHub Actions
       ↓
 AWS SSM
@@ -499,9 +503,9 @@ Frontend EC2
 docker pull
       ↓
 docker run
-
+```
 and:
-
+```
 GitHub Actions
       ↓
 AWS SSM
@@ -511,7 +515,7 @@ Backend EC2
 docker pull
       ↓
 docker run
-
+```
 
 ## 🧪 Terraform Commands
 
@@ -545,6 +549,7 @@ AWS_SECRET_ACCESS_KEY
 AWS_ACCOUNT_ID
 
 These values must be stored in:
+```
 GitHub Repository
    ↓
 Settings
@@ -552,6 +557,7 @@ Settings
 Secrets and variables
    ↓
 Actions
+```
 ### ⚠️ Never commit AWS credentials directly into the repository.
 
 
@@ -606,6 +612,7 @@ Nginx
 The Application Load Balancers use target groups to check application health.
 
 ### Frontend
+```
 ALB
  ↓
 Frontend EC2 :80
@@ -622,7 +629,7 @@ The backend target group uses:
 
 Health Check Path:
 /transaction
-
+```
 
 ## 💰 Cost Considerations
 
@@ -724,6 +731,7 @@ Application health checks
 ## 🎯 Project Goal
 
 The main goal of this project is to understand how a real-world application can be:
+```
 Developed
     ↓
 Containerized
@@ -739,7 +747,7 @@ Connected using Load Balancers
 Connected to RDS
     ↓
 Automatically deployed using GitHub Actions
-
+```
 
 ## 🚀 Future Improvements
 
