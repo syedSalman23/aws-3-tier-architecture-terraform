@@ -198,6 +198,7 @@ Database Security Group
 ```
 
 ## Rules
+```
 Component	    Port	Source
 Public ALB	    80	    Internet
 Frontend EC2	80	    Public ALB SG
@@ -205,11 +206,12 @@ Internal ALB	80	    Frontend SG
 Backend EC2	    4000	Internal ALB SG
 RDS MySQL	    3306	Backend SG
 This prevents direct internet access to the backend and database.
+```
 
 ## 🐳 Docker Architecture
 Both frontend and backend applications are containerized.
 
-## Frontend Docker flow
+Frontend Docker flow
 React Source Code
        ↓
 Node.js Build
@@ -236,7 +238,6 @@ Port 4000
 
 ## 🔄 Frontend → Backend Communication
 The React application does not directly connect to the backend EC2 private IP.
-
 The frontend sends API requests through Nginx.
 
 Example:
@@ -297,7 +298,7 @@ Instead, it uses the RDS DNS endpoint.
 ## 🏗️ Infrastructure as Code
 Terraform is used to create and manage the AWS infrastructure.
 
-## Terraform manages:
+Terraform manages:
 VPC
 Subnets
 Route Tables
