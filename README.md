@@ -63,15 +63,13 @@ This project implements a traditional **3-Tier Architecture**:
 
 ---
 
-🏗️ Architecture
+**🏗️ Architecture**
 
-🔥 Architecture Components
-1️⃣ Presentation Tier
-
+**🔥 Architecture Components**
+# 1️⃣ Presentation Tier
 The frontend is built using React.
 
 The React application is:
-
 Built using Node.js
 Packaged into a Docker image
 Served using Nginx
@@ -80,7 +78,6 @@ Located in public subnets
 Registered with the Public Application Load Balancer
 
 Frontend flow:
-
 User
   ↓
 Public ALB
@@ -90,17 +87,18 @@ Frontend EC2
 Nginx
   ↓
 React Application
-2️⃣ Application Tier
 
+
+# 2️⃣ Application Tier
 The backend is built using Node.js + Express.
 
 The backend:
 
-Runs inside Docker
-Listens on port 4000
-Runs on private EC2 instances
-Is registered with the Internal Application Load Balancer
-Communicates with Amazon RDS
+* Runs inside Docker
+* Listens on port 4000
+* Runs on private EC2 instances
+* Is registered with the Internal Application Load Balancer
+* Communicates with Amazon RDS
 
 Backend flow:
 
@@ -113,8 +111,8 @@ Backend EC2
 Node.js Application
    ↓
 RDS MySQL
-3️⃣ Database Tier
 
+# 3️⃣ Database Tier
 The database tier uses Amazon RDS for MySQL.
 
 The database:
@@ -124,11 +122,11 @@ Uses a DB subnet group
 Is not directly accessible from the internet
 Accepts traffic only from the backend security group
 Uses port 3306
-☁️ AWS Infrastructure
 
+# ☁️ AWS Infrastructure
 The infrastructure is created using Terraform.
 
-AWS services used
+# AWS services used
 Amazon VPC
 Public Subnets
 Private Subnets
@@ -145,37 +143,36 @@ Amazon ECR
 Amazon RDS MySQL
 IAM
 AWS Systems Manager
-🌐 VPC Architecture
+
+
+# 🌐 VPC Architecture
 
 VPC CIDR:
-
 10.0.0.0/16
+
 Public Subnets
 10.0.0.0/24
 10.0.1.0/24
-
 Used for:
-
 Frontend EC2 instances
 Public ALB
 NAT Gateway
+
 Private Subnets
 10.0.2.0/24
 10.0.3.0/24
-
 Used for:
-
 Backend EC2 instances
 Internal ALB
+
 Database Subnets
 10.0.4.0/24
 10.0.5.0/24
-
 Used for:
-
 Amazon RDS MySQL
-🔐 Security Group Architecture
 
+
+# 🔐 Security Group Architecture
 Traffic is restricted using security groups.
 
 Internet
@@ -198,21 +195,20 @@ Backend Security Group
    │ Port 3306
    ▼
 Database Security Group
-Rules
-Component	Port	Source
-Public ALB	80	Internet
-Frontend EC2	80	Public ALB SG
-Internal ALB	80	Frontend SG
-Backend EC2	4000	Internal ALB SG
-RDS MySQL	3306	Backend SG
 
+# Rules
+Component	    Port	Source
+Public ALB	    80	    Internet
+Frontend EC2	80	    Public ALB SG
+Internal ALB	80	    Frontend SG
+Backend EC2	    4000	Internal ALB SG
+RDS MySQL	    3306	Backend SG
 This prevents direct internet access to the backend and database.
 
-🐳 Docker Architecture
-
+# 🐳 Docker Architecture
 Both frontend and backend applications are containerized.
 
-Frontend Docker flow
+# Frontend Docker flow
 React Source Code
        ↓
 Node.js Build
@@ -224,7 +220,8 @@ Nginx Docker Image
 Frontend Container
        ↓
 Port 80
-Backend Docker flow
+
+# Backend Docker flow
 Node.js Source Code
        ↓
 Docker Build
@@ -234,18 +231,17 @@ Backend Docker Image
 Backend Container
        ↓
 Port 4000
-🔄 Frontend → Backend Communication
 
+
+# 🔄 Frontend → Backend Communication
 The React application does not directly connect to the backend EC2 private IP.
 
 The frontend sends API requests through Nginx.
 
 Example:
-
 fetch('/api/transaction')
 
 Nginx receives:
-
 /api/transaction
 
 and forwards the request to the Internal ALB.
@@ -265,22 +261,20 @@ Backend EC2
 Node.js
 
 The Nginx configuration uses:
-
 location /api/ {
     proxy_pass http://${INTERNAL_ALB_DNS}/;
 }
 
 Therefore:
-
 /api/transaction
         ↓
 /transaction
 
 The backend exposes:
-
 GET /transaction
-🗄️ Backend → Database Communication
 
+
+# 🗄️ Backend → Database Communication
 The Node.js backend connects to RDS using:
 
 DB_HOST
@@ -288,8 +282,7 @@ DB_USER
 DB_PWD
 DB_DATABASE
 
-The connection uses:
-
+# The connection uses:
 Backend EC2
     ↓
 RDS Endpoint
@@ -297,17 +290,13 @@ RDS Endpoint
 Port 3306
     ↓
 MySQL
-
 The backend never needs the database's IP address.
-
 Instead, it uses the RDS DNS endpoint.
 
-🏗️ Infrastructure as Code
-
+# 🏗️ Infrastructure as Code
 Terraform is used to create and manage the AWS infrastructure.
 
-Terraform manages:
-
+# Terraform manages:
 VPC
 Subnets
 Route Tables
@@ -322,7 +311,9 @@ RDS
 ALB
 Target Groups
 Listeners
-📁 Project Structure
+
+# 📁 Project Structure
+```
 aws-3-tier-architecture-terraform/
 │
 ├── .github/
@@ -371,28 +362,31 @@ aws-3-tier-architecture-terraform/
 ├── subnet.tf
 ├── target-group.tf
 └── vpc.tf
-🔧 Terraform Files
-File	Purpose
-provider.tf	AWS provider configuration
-vpc.tf	Creates VPC
-subnet.tf	Creates subnets
-internet-gateway.tf	Internet Gateway
-nat-gateway.tf	NAT Gateway
-eip.tf	Elastic IP
-rout-table.tf	Route tables
-security.tf	Security groups
-ec2.tf	EC2 instances
-iam.tf	IAM roles and permissions
-ecr.tf	ECR repositories
-lb.tf	Application Load Balancers
-target-group.tf	Target groups
-rds.tf	RDS MySQL
-outputs.tf	Terraform outputs
-auto-scaling.tf	Auto Scaling configuration/work area
-🚀 CI/CD Pipeline
 
+
+# 🔧 Terraform Files
+File	                Purpose
+provider.tf	            AWS provider configuration
+vpc.tf	                Creates VPC
+subnet.tf	            Creates subnets
+internet-gateway.tf	    Internet Gateway
+nat-gateway.tf	        NAT Gateway
+eip.tf	                Elastic IP
+rout-table.tf	        Route tables
+security.tf	            Security groups
+ec2.tf	                EC2 instances
+iam.tf	                IAM roles and permissions
+ecr.tf	                ECR repositories
+lb.tf	                Load Balancers
+target-group.tf	        Target groups
+rds.tf	                RDS MySQL
+outputs.tf	            Terraform outputs
+auto-scaling.tf	        Auto Scaling configuration/work area
+
+
+# 🚀 CI/CD Pipeline
 GitHub Actions is used to automate Docker image creation and deployment.
-
+```
 Developer
     │
     │ git push
@@ -426,10 +420,11 @@ Amazon ECR       Amazon ECR
             │
             ▼
      Start New Container
-🔄 CI/CD Process
+
+
+# 🔄 CI/CD Process
 
 When code is pushed to the main branch:
-
 git push
    ↓
 GitHub Actions starts
@@ -453,52 +448,46 @@ Pull latest Docker image
 Remove old container
    ↓
 Start new container
-
 The workflow can also be started manually using:
-
 GitHub Actions → Run workflow
-📦 Amazon ECR
+
+
+# 📦 Amazon ECR
 
 Two ECR repositories are used:
-
 frontend-image
 backend-image
 
 Images are stored as:
-
 <account-id>.dkr.ecr.ap-south-1.amazonaws.com/frontend-image:latest
-
 <account-id>.dkr.ecr.ap-south-1.amazonaws.com/backend-image:latest
-🖥️ EC2 Deployment
+
+
+# 🖥️ EC2 Deployment
 
 Frontend EC2 instances run in public subnets.
-
 Backend EC2 instances run in private subnets.
-
 Docker is installed automatically using EC2 user_data.
 
 The EC2 setup installs:
-
 Docker
 AWS CLI v2
 AWS Systems Manager Agent
-🔑 IAM
+
+
+# 🔑 IAM
 
 EC2 instances use an IAM instance profile.
-
 The EC2 IAM role provides permissions for:
 
-Pulling images from ECR
-Connecting to AWS Systems Manager
-
+    Pulling images from ECR
+    Connecting to AWS Systems Manager
 This allows deployment without storing AWS credentials inside the EC2 instance.
 
-📡 AWS Systems Manager
-
+# 📡 AWS Systems Manager
 GitHub Actions uses AWS Systems Manager to execute deployment commands on EC2.
 
-Example deployment flow:
-
+# Example deployment flow:
 GitHub Actions
       ↓
 AWS SSM
@@ -520,37 +509,33 @@ Backend EC2
 docker pull
       ↓
 docker run
-🧪 Terraform Commands
+
+
+# 🧪 Terraform Commands
 
 Initialize Terraform:
-
 terraform init
 
 Format Terraform files:
-
 terraform fmt
 
 Validate configuration:
-
 terraform validate
 
 Create execution plan:
-
 terraform plan
 
 Create infrastructure:
-
 terraform apply
 
 Destroy infrastructure:
-
 terraform destroy
 
 Check Terraform state:
-
 terraform state list
-🔐 GitHub Secrets
 
+
+# 🔐 GitHub Secrets
 The GitHub Actions workflow requires these secrets:
 
 AWS_ACCESS_KEY_ID
@@ -558,7 +543,6 @@ AWS_SECRET_ACCESS_KEY
 AWS_ACCOUNT_ID
 
 These values must be stored in:
-
 GitHub Repository
    ↓
 Settings
@@ -566,32 +550,28 @@ Settings
 Secrets and variables
    ↓
 Actions
-
 ⚠️ Never commit AWS credentials directly into the repository.
 
-🌍 Application Access
 
+# 🌍 Application Access
 After Terraform deployment, Terraform outputs the ALB DNS names.
 
 Example:
-
 public_alb_dns_name
 internal_alb_dns_name
 
 The public ALB is the application entry point.
 
 Example:
-
 http://public-alb-dns-name
-
 The internal ALB is not directly accessible from the internet.
-
 It is used only for communication between the frontend and backend tiers.
 
-🔍 Application Request Flow
+
+# 🔍 Application Request Flow
 
 When a user opens the application:
-
+```
 User Browser
      │
      ▼
@@ -618,31 +598,33 @@ Nginx
             │
             ▼
         RDS MySQL
-🩺 Health Checks
 
+
+# 🩺 Health Checks
 The Application Load Balancers use target groups to check application health.
 
-Frontend
+## Frontend
 ALB
  ↓
 Frontend EC2 :80
  ↓
 HTTP health check
-Backend
+
+## Backend
 Internal ALB
  ↓
 Backend EC2 :4000
  ↓
 /transaction
-
 The backend target group uses:
 
 Health Check Path:
 /transaction
-💰 Cost Considerations
+
+
+# 💰 Cost Considerations
 
 This project uses AWS resources that may incur charges, including:
-
 EC2
 Application Load Balancer
 NAT Gateway
@@ -651,18 +633,15 @@ Elastic IP
 ECR
 CloudWatch
 Other AWS services
-
 For learning purposes, infrastructure should be destroyed when it is no longer required.
-
 terraform destroy
-⚠️ Security Notes
 
+
+# ⚠️ Security Notes
 This repository is intended for learning and demonstration purposes.
-
 The current configuration contains simplified settings suitable for a learning environment.
 
 For production environments, improve the configuration by using:
-
 AWS Secrets Manager
 AWS Systems Manager Parameter Store
 IAM least-privilege policies
@@ -678,7 +657,9 @@ Multi-AZ architecture
 Automated backups
 Remote Terraform state
 Terraform state locking
-🛠️ Technologies Used
+
+
+# 🛠️ Technologies Used
 Cloud
 AWS
 EC2
@@ -707,10 +688,11 @@ CI/CD
 GitHub Actions
 Operating System
 Ubuntu
-📚 DevOps Concepts Demonstrated
+
+
+# 📚 DevOps Concepts Demonstrated
 
 This project demonstrates practical knowledge of:
-
 Infrastructure as Code
 AWS networking
 VPC architecture
@@ -735,10 +717,11 @@ CI/CD
 Terraform
 Automated deployment
 Application health checks
-🎯 Project Goal
+
+
+# 🎯 Project Goal
 
 The main goal of this project is to understand how a real-world application can be:
-
 Developed
     ↓
 Containerized
@@ -754,10 +737,11 @@ Connected using Load Balancers
 Connected to RDS
     ↓
 Automatically deployed using GitHub Actions
-🚀 Future Improvements
+
+
+# 🚀 Future Improvements
 
 Possible improvements include:
-
  HTTPS using AWS Certificate Manager
  Route 53 domain
  Auto Scaling Groups
@@ -774,20 +758,17 @@ Possible improvements include:
  Automated rollback
  Container vulnerability scanning
  Production-grade monitoring
-👨‍💻 Author
 
+===================================================================================*
+**👨‍💻 Author**
 Syed Salman N
-
 DevOps Engineer | AWS | Terraform | Docker | CI/CD
-
 GitHub:
-
 https://github.com/syedSalman23
+===================================================================================*
 
-⭐ Project
 
+# ⭐ Project
 If you find this project useful for learning AWS, Terraform and DevOps concepts, feel free to explore the repository.
-
 Repository:
-
 https://github.com/syedSalman23/aws-3-tier-architecture-terraform
