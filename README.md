@@ -15,7 +15,7 @@ This project demonstrates how to build and automate a complete AWS infrastructur
 
 ---
 
-## 📌 Project Overview
+# 📌 Project Overview
 
 This project implements a traditional **3-Tier Architecture**:
 
@@ -63,10 +63,10 @@ This project implements a traditional **3-Tier Architecture**:
 
 ---
 
-**🏗️ Architecture**
+#🏗️ Architecture
 
-**🔥 Architecture Components**
-# 1️⃣ Presentation Tier
+🔥 Architecture Components
+## 1️⃣ Presentation Tier
 The frontend is built using React.
 
 The React application is:
@@ -89,7 +89,7 @@ Nginx
 React Application
 
 
-# 2️⃣ Application Tier
+## 2️⃣ Application Tier
 The backend is built using Node.js + Express.
 
 The backend:
@@ -112,7 +112,7 @@ Node.js Application
    ↓
 RDS MySQL
 
-# 3️⃣ Database Tier
+## 3️⃣ Database Tier
 The database tier uses Amazon RDS for MySQL.
 
 The database:
@@ -123,10 +123,10 @@ Is not directly accessible from the internet
 Accepts traffic only from the backend security group
 Uses port 3306
 
-# ☁️ AWS Infrastructure
+## ☁️ AWS Infrastructure
 The infrastructure is created using Terraform.
 
-# AWS services used
+## AWS services used
 Amazon VPC
 Public Subnets
 Private Subnets
@@ -145,7 +145,7 @@ IAM
 AWS Systems Manager
 
 
-# 🌐 VPC Architecture
+## 🌐 VPC Architecture
 
 VPC CIDR:
 10.0.0.0/16
@@ -172,7 +172,7 @@ Used for:
 Amazon RDS MySQL
 
 
-# 🔐 Security Group Architecture
+## 🔐 Security Group Architecture
 Traffic is restricted using security groups.
 
 Internet
@@ -196,7 +196,7 @@ Backend Security Group
    ▼
 Database Security Group
 
-# Rules
+## Rules
 Component	    Port	Source
 Public ALB	    80	    Internet
 Frontend EC2	80	    Public ALB SG
@@ -205,10 +205,10 @@ Backend EC2	    4000	Internal ALB SG
 RDS MySQL	    3306	Backend SG
 This prevents direct internet access to the backend and database.
 
-# 🐳 Docker Architecture
+## 🐳 Docker Architecture
 Both frontend and backend applications are containerized.
 
-# Frontend Docker flow
+## Frontend Docker flow
 React Source Code
        ↓
 Node.js Build
@@ -221,7 +221,7 @@ Frontend Container
        ↓
 Port 80
 
-# Backend Docker flow
+## Backend Docker flow
 Node.js Source Code
        ↓
 Docker Build
@@ -233,7 +233,7 @@ Backend Container
 Port 4000
 
 
-# 🔄 Frontend → Backend Communication
+## 🔄 Frontend → Backend Communication
 The React application does not directly connect to the backend EC2 private IP.
 
 The frontend sends API requests through Nginx.
@@ -274,7 +274,7 @@ The backend exposes:
 GET /transaction
 
 
-# 🗄️ Backend → Database Communication
+## 🗄️ Backend → Database Communication
 The Node.js backend connects to RDS using:
 
 DB_HOST
@@ -282,7 +282,7 @@ DB_USER
 DB_PWD
 DB_DATABASE
 
-# The connection uses:
+## The connection uses:
 Backend EC2
     ↓
 RDS Endpoint
@@ -293,10 +293,10 @@ MySQL
 The backend never needs the database's IP address.
 Instead, it uses the RDS DNS endpoint.
 
-# 🏗️ Infrastructure as Code
+## 🏗️ Infrastructure as Code
 Terraform is used to create and manage the AWS infrastructure.
 
-# Terraform manages:
+## Terraform manages:
 VPC
 Subnets
 Route Tables
@@ -312,7 +312,7 @@ ALB
 Target Groups
 Listeners
 
-# 📁 Project Structure
+## 📁 Project Structure
 ```
 aws-3-tier-architecture-terraform/
 │
@@ -362,9 +362,9 @@ aws-3-tier-architecture-terraform/
 ├── subnet.tf
 ├── target-group.tf
 └── vpc.tf
+```
 
-
-# 🔧 Terraform Files
+## 🔧 Terraform Files
 File	                Purpose
 provider.tf	            AWS provider configuration
 vpc.tf	                Creates VPC
@@ -384,7 +384,7 @@ outputs.tf	            Terraform outputs
 auto-scaling.tf	        Auto Scaling configuration/work area
 
 
-# 🚀 CI/CD Pipeline
+## 🚀 CI/CD Pipeline
 GitHub Actions is used to automate Docker image creation and deployment.
 ```
 Developer
@@ -420,9 +420,9 @@ Amazon ECR       Amazon ECR
             │
             ▼
      Start New Container
+```
 
-
-# 🔄 CI/CD Process
+## 🔄 CI/CD Process
 
 When code is pushed to the main branch:
 git push
@@ -452,7 +452,7 @@ The workflow can also be started manually using:
 GitHub Actions → Run workflow
 
 
-# 📦 Amazon ECR
+## 📦 Amazon ECR
 
 Two ECR repositories are used:
 frontend-image
@@ -463,7 +463,7 @@ Images are stored as:
 <account-id>.dkr.ecr.ap-south-1.amazonaws.com/backend-image:latest
 
 
-# 🖥️ EC2 Deployment
+## 🖥️ EC2 Deployment
 
 Frontend EC2 instances run in public subnets.
 Backend EC2 instances run in private subnets.
@@ -475,7 +475,7 @@ AWS CLI v2
 AWS Systems Manager Agent
 
 
-# 🔑 IAM
+## 🔑 IAM
 
 EC2 instances use an IAM instance profile.
 The EC2 IAM role provides permissions for:
@@ -484,10 +484,10 @@ The EC2 IAM role provides permissions for:
     Connecting to AWS Systems Manager
 This allows deployment without storing AWS credentials inside the EC2 instance.
 
-# 📡 AWS Systems Manager
+## 📡 AWS Systems Manager
 GitHub Actions uses AWS Systems Manager to execute deployment commands on EC2.
 
-# Example deployment flow:
+## Example deployment flow:
 GitHub Actions
       ↓
 AWS SSM
@@ -511,7 +511,7 @@ docker pull
 docker run
 
 
-# 🧪 Terraform Commands
+## 🧪 Terraform Commands
 
 Initialize Terraform:
 terraform init
@@ -535,7 +535,7 @@ Check Terraform state:
 terraform state list
 
 
-# 🔐 GitHub Secrets
+## 🔐 GitHub Secrets
 The GitHub Actions workflow requires these secrets:
 
 AWS_ACCESS_KEY_ID
@@ -550,10 +550,10 @@ Settings
 Secrets and variables
    ↓
 Actions
-⚠️ Never commit AWS credentials directly into the repository.
+### ⚠️ Never commit AWS credentials directly into the repository.
 
 
-# 🌍 Application Access
+## 🌍 Application Access
 After Terraform deployment, Terraform outputs the ALB DNS names.
 
 Example:
@@ -568,7 +568,7 @@ The internal ALB is not directly accessible from the internet.
 It is used only for communication between the frontend and backend tiers.
 
 
-# 🔍 Application Request Flow
+## 🔍 Application Request Flow
 
 When a user opens the application:
 ```
@@ -598,19 +598,19 @@ Nginx
             │
             ▼
         RDS MySQL
+```
 
-
-# 🩺 Health Checks
+## 🩺 Health Checks
 The Application Load Balancers use target groups to check application health.
 
-## Frontend
+### Frontend
 ALB
  ↓
 Frontend EC2 :80
  ↓
 HTTP health check
 
-## Backend
+### Backend
 Internal ALB
  ↓
 Backend EC2 :4000
@@ -622,7 +622,7 @@ Health Check Path:
 /transaction
 
 
-# 💰 Cost Considerations
+## 💰 Cost Considerations
 
 This project uses AWS resources that may incur charges, including:
 EC2
@@ -637,7 +637,7 @@ For learning purposes, infrastructure should be destroyed when it is no longer r
 terraform destroy
 
 
-# ⚠️ Security Notes
+## ⚠️ Security Notes
 This repository is intended for learning and demonstration purposes.
 The current configuration contains simplified settings suitable for a learning environment.
 
@@ -659,7 +659,7 @@ Remote Terraform state
 Terraform state locking
 
 
-# 🛠️ Technologies Used
+## 🛠️ Technologies Used
 Cloud
 AWS
 EC2
@@ -690,7 +690,7 @@ Operating System
 Ubuntu
 
 
-# 📚 DevOps Concepts Demonstrated
+## 📚 DevOps Concepts Demonstrated
 
 This project demonstrates practical knowledge of:
 Infrastructure as Code
@@ -719,7 +719,7 @@ Automated deployment
 Application health checks
 
 
-# 🎯 Project Goal
+## 🎯 Project Goal
 
 The main goal of this project is to understand how a real-world application can be:
 Developed
@@ -739,7 +739,7 @@ Connected to RDS
 Automatically deployed using GitHub Actions
 
 
-# 🚀 Future Improvements
+## 🚀 Future Improvements
 
 Possible improvements include:
  HTTPS using AWS Certificate Manager
@@ -760,15 +760,16 @@ Possible improvements include:
  Production-grade monitoring
 
 ===================================================================================*
-**👨‍💻 Author**
-Syed Salman N
+#  Author
+## Syed Salman N
 DevOps Engineer | AWS | Terraform | Docker | CI/CD
 GitHub:
 https://github.com/syedSalman23
+https://www.linkedin.com/in/syed-salman-n/
 ===================================================================================*
 
 
-# ⭐ Project
+## ⭐ Project
 If you find this project useful for learning AWS, Terraform and DevOps concepts, feel free to explore the repository.
 Repository:
 https://github.com/syedSalman23/aws-3-tier-architecture-terraform
