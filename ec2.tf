@@ -8,18 +8,28 @@ resource "aws_instance" "frontend" {
   user_data = <<-EOF
     #!/bin/bash
 
+    set -e
+
     apt-get update
-    apt-get install -y docker.io awscli
+
+    # Install Docker and required tools
+    apt-get install -y docker.io curl unzip
 
     systemctl enable docker
     systemctl start docker
 
-    if ! snap list amazon-ssm-agent >/dev/null 2>&1; then
-    snap install amazon-ssm-agent --classic
-    fi
-    systemctl enable --now snap.amazon-ssm-agent.amazon-ssm-agent
+    # Install AWS CLI v2
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+    unzip -q /tmp/awscliv2.zip -d /tmp
+    /tmp/aws/install
 
-  EOF
+    # Install and start SSM Agent
+    if ! snap list amazon-ssm-agent >/dev/null 2>&1; then
+      snap install amazon-ssm-agent --classic
+    fi
+
+    systemctl enable --now snap.amazon-ssm-agent.amazon-ssm-agent
+    EOF
 
   count = 2
 
@@ -39,17 +49,27 @@ resource "aws_instance" "backend" {
   user_data = <<-EOF
     #!/bin/bash
 
+    set -e
+
     apt-get update
-    apt-get install -y docker.io awscli
+
+    # Install Docker and required tools
+    apt-get install -y docker.io curl unzip
 
     systemctl enable docker
     systemctl start docker
 
-    if ! snap list amazon-ssm-agent >/dev/null 2>&1; then
-    snap install amazon-ssm-agent --classic
-    fi
-    systemctl enable --now snap.amazon-ssm-agent.amazon-ssm-agent
+    # Install AWS CLI v2
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+    unzip -q /tmp/awscliv2.zip -d /tmp
+    /tmp/aws/install
 
+    # Install and start SSM Agent
+    if ! snap list amazon-ssm-agent >/dev/null 2>&1; then
+      snap install amazon-ssm-agent --classic
+    fi
+
+    systemctl enable --now snap.amazon-ssm-agent.amazon-ssm-agent
   EOF
 
   count = 2

@@ -29,7 +29,7 @@ resource "aws_db_instance" "rds-db" {
 
   username = "root"
 
-  password = "root@123"
+  password = "root12345"
 
   db_subnet_group_name = aws_db_subnet_group.db-sub-group.name
 
