@@ -19,7 +19,6 @@ This project demonstrates how to build and automate a complete AWS infrastructur
 
 This project implements a traditional **3-Tier Architecture**:
 
-```text
                     Internet
                        │
                        ▼
@@ -62,6 +61,7 @@ This project implements a traditional **3-Tier Architecture**:
               │   DB Subnets    │
               └─────────────────┘
 
+---
 
 🏗️ Architecture
 
