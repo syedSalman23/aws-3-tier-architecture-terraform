@@ -769,14 +769,16 @@ Possible improvements include:
  Container vulnerability scanning
  Production-grade monitoring
 
-===================================================================================*
+============================================================================*
 #  Author
 ## Syed Salman N
 DevOps Engineer | AWS | Terraform | Docker | CI/CD
+
 GitHub:
 https://github.com/syedSalman23
+Linkedin:
 https://www.linkedin.com/in/syed-salman-n/
-===================================================================================*
+============================================================================*
 
 
 ## ⭐ Project
